@@ -12,11 +12,11 @@ import (
 	"net"
 )
 
-//A Dailer can be used in place of many Dial-related functions of the net package and others.
+//Dialer can be used in place of many Dial-related functions of the net package and others.
 //The returned net.Conn is always related to the Listener that returned the Dialer via Listener.NewDialer.
 //Therefore the passed network and address are ignored. The given context is not however, if the context
 //expires before the connection is made then ctx.Err is returned.
-type Dailer interface {
+type Dialer interface {
 	Dial(network, address string) (net.Conn, error)
 	DialContext(ctx context.Context, network, address string) (net.Conn, error)
 }
@@ -102,7 +102,7 @@ func (l Listener) Close() error {
 }
 
 //NewDialer returns a new Dialer that can be used to dail the given Listener.
-func (l Listener) NewDialer() Dailer {
+func (l Listener) NewDialer() Dialer {
 	return dialer{
 		nc:   l.nc,
 		done: l.done,
