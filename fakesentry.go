@@ -94,8 +94,7 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		_, err := io.ReadAtLeast(r.Body, jb, int(r.ContentLength))
 		if err != nil {
-			h.logger.Printf("ReadAtLeast: %v", err)
-			w.WriteHeader(http.StatusBadRequest)
+			h.eh(w, r, err)
 			return
 		}
 	} else if ct == "application/octet-stream" {
@@ -104,16 +103,14 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 		zlr, err := zlib.NewReader(b64r)
 		if err != nil {
-			h.logger.Printf("zlib.NewReader: %v", err)
-			w.WriteHeader(http.StatusInternalServerError)
+			h.eh(w, r, err)
 			return
 		}
 
 		jb, err = ioutil.ReadAll(zlr)
 		zlr.Close()
 		if err != nil {
-			h.logger.Printf("ReadAll: %v", err)
-			w.WriteHeader(http.StatusInternalServerError)
+			h.eh(w, r, err)
 			return
 		}
 	} else {
@@ -135,7 +132,7 @@ func (h Handler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 	buf := new(bytes.Buffer)
 	if err = json.Indent(buf, jb, "", "  "); err != nil {
-		h.logger.Printf("json.Indent: %v", err)
+		h.eh(w, r, err)
 	}
 
 	h.logger.Printf("\n%s%s\n", b, buf.Bytes())
