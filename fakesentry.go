@@ -1,3 +1,15 @@
+/*
+Package fakesentry provides various functionality to run a 'fake sentry' server internal to a Go process
+off or on the network. The primary motivation of this package was to provide an easy way of viewing data
+your Go program may send to Sentry during run, but in a development mode without sending data to a production
+DSN or otherwise setting up an entire Sentry server instance with its dependencies. As such, this should be
+guarded under a development mode or build flag unless care is taken and the user has read this packages documentation.
+
+By default, the Server type in this package will start an internal HTTP server without using the network stack
+and provides a Dialer and *http.Transport that can be configured with your Sentry/Raven client to make requests to.
+The Server will simply pretty-print the JSON sent by the client to STDERR. Much of this behavior can be added to
+or changed. It is recommended to look at the package example and read each types documentation for more configuration.
+*/
 package fakesentry
 
 import (
