@@ -1,6 +1,6 @@
 
 
-# fakesentry
+# fakesentry [![GoDoc](https://godoc.org/github.com/VerticalOps/fakesentry?status.svg)](https://godoc.org/github.com/VerticalOps/fakesentry)
 `import "github.com/VerticalOps/fakesentry"`
 
 * [Overview](#pkg-overview)

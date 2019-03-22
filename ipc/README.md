@@ -1,6 +1,6 @@
 
 
-# ipc
+# ipc [![GoDoc](https://godoc.org/github.com/VerticalOps/fakesentry/ipc?status.svg)](https://godoc.org/github.com/VerticalOps/fakesentry/ipc)
 `import "github.com/VerticalOps/fakesentry/ipc"`
 
 * [Overview](#pkg-overview)
