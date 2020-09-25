@@ -16,7 +16,7 @@ DSN or otherwise setting up an entire Sentry server instance with its dependenci
 guarded under a development mode or build flag unless care is taken and the user has read this packages documentation.
 
 By default, the Server type in this package will start an internal HTTP server without using the network stack
-and provides a Dialer and *http.Transport that can be configured with your Sentry/Raven client to make requests to.
+and provides a Dialer and *http.Transport that can be configured with your Sentry client to make requests to.
 The Server will simply pretty-print the JSON sent by the client to STDERR. Much of this behavior can be added to
 or changed. It is recommended to look at the package example and read each types documentation for more configuration.
 

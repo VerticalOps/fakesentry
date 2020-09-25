@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/VerticalOps/fakesentry"
-	raven "github.com/getsentry/raven-go"
+	"github.com/getsentry/sentry-go"
 )
 
 func TestBasicUsage(t *testing.T) {
@@ -18,8 +18,10 @@ func TestBasicUsage(t *testing.T) {
 
 	const errMsg = "A bad error"
 	type errJSON struct {
-		Message string `json:"message"`
 		EventID string `json:"event_id"`
+		Exe     []struct {
+			Value string `json:"value"`
+		} `json:"exception"`
 		//just ignore everything else for now
 	}
 
@@ -46,20 +48,26 @@ func TestBasicUsage(t *testing.T) {
 	go srv.Serve(srv.Listener())
 	defer srv.Close()
 
-	raven.DefaultClient.Transport = &raven.HTTPTransport{
-		Client: &http.Client{Transport: srv.Transport()},
+	opts := sentry.ClientOptions{
+		Dsn:           `http://thisis:myfakeauth@localhost/1`,
+		Transport:     sentry.NewHTTPSyncTransport(),
+		HTTPTransport: srv.Transport(),
 	}
 
-	if err := raven.SetDSN(`http://thisis:myfakeauth@localhost/1`); err != nil {
-		t.Fatalf("Unable to set raven DSN: %v", err)
+	if err := sentry.Init(opts); err != nil {
+		t.Fatalf("Unable to init sentry: %v", err)
 	}
 
-	eventID := raven.CaptureErrorAndWait(errors.New(errMsg), nil)
-	if eventID == "" {
+	eventID := sentry.CaptureException(errors.New(errMsg))
+	if eventID == nil {
 		t.Fatal("Did not get an event ID from raven")
 	}
 
-	if ej.Message != errMsg || ej.EventID != eventID {
-		t.Fatalf("Values received from raven do not match expected values: Msg (%s) EventID (%s) JSON (%+v)", errMsg, eventID, ej)
+	if len(ej.Exe) == 0 {
+		t.Fatal("No captured exceptions")
+	}
+
+	if ej.Exe[0].Value != errMsg || ej.EventID != string(*eventID) {
+		t.Fatalf("Values received from raven do not match expected values: Msg (%s) EventID (%s) JSON (%+v)", errMsg, *eventID, ej)
 	}
 }
